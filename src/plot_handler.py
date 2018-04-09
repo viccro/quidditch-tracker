@@ -47,7 +47,7 @@ def draw_plot(data_frame, debug_mode):
     ax.set_xlabel('Times in EST', color=text_color, fontsize=10)
 
     # Legend format
-    # plt.legend(loc=2, numpoints=1, bbox_to_anchor=(1.05, 1), borderaxespad=0.)
+    plt.legend(loc=2, numpoints=1, bbox_to_anchor=(1.05, 1), borderaxespad=0.)
     leg = plt.gca().get_legend()
     ltext = leg.get_texts()
     plt.setp(ltext, fontsize='xx-small')
@@ -55,8 +55,10 @@ def draw_plot(data_frame, debug_mode):
     # Date formatting
     graph.tick_params(axis='both', which='major', labelsize=10)
     datemin = dt.datetime(2018, 4, 9, 12, 0)
-    datemax = dt.datetime.now()
-    datemax = datemax + dt.timedelta(minutes=60)
+    datenow = dt.datetime.now()
+    raceDuration = datenow - datemin
+    print(raceDuration/3)
+    datemax = datenow + dt.timedelta(minutes=60)
     ax.set_xlim(datemin, datemax)
 
     days = dates.DayLocator()
