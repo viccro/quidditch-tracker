@@ -34,10 +34,11 @@ def extractTeamList(debug_mode_on):
 
         tD = team.find_all('span', class_='distance')
         if len(tD) > 0:
-            teamDistance = float(tD[0].get_text().split()[0])
+            teamDistance = tD[0].get_text().split()[0]
             if teamDistance == 'Finished':
                 teamDistance = total_miles_in_race
-    #    tI = team.find_all('div', class_='icon')
+            teamDistance = float(teamDistance)
+                #    tI = team.find_all('div', class_='icon')
     #    if len(tI) > 0:
     #        teamImage = tI[0]
     #        print(teamImage)

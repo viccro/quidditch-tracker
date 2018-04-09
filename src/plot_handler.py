@@ -1,3 +1,4 @@
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.dates as dates
 import pandas as pd
@@ -7,6 +8,7 @@ import datetime as dt
 from numpy import arange
 import paths
 
+mpl.use('TkAgg')
 # Colorblind-friendly colors
 colors = [[0,0,0], [230/255,159/255,0], [86/255,180/255,233/255], [0,158/255,115/255],
           [213/255,94/255,0], [0,114/255,178/255]]
@@ -14,9 +16,10 @@ colors = [[0,0,0], [230/255,159/255,0], [86/255,180/255,233/255], [0,158/255,115
 bg_color = "xkcd:bluegrey"
 text_color = "#f0f0f0"
 
-plot_path = paths.dropboxPath
-plot_file_debug = "plot-debug.png"
-plot_file = "plot.png"
+plot_path = paths.local_directory
+plot_file_debug = paths.local_directory + "plot-debug.png"
+plot_file = paths.local_directory + "local.png"
+
 
 def plot_distance_over_time(data_by_team, debug_mode):
     print("Plotting distances over time")
@@ -51,11 +54,9 @@ def draw_plot(data_frame, debug_mode):
 
     # Date formatting
     graph.tick_params(axis='both', which='major', labelsize=10)
-    datemin = dt.datetime(2017, 11, 6, 12, 0)
+    datemin = dt.datetime(2018, 4, 9, 12, 0)
     datemax = dt.datetime.now()
-    datemax = datemax - dt.timedelta(minutes=datemax.minute % 10,
-                                     seconds=datemax.second,
-                                     microseconds=datemax.microsecond)
+    datemax = datemax + dt.timedelta(minutes=60)
     ax.set_xlim(datemin, datemax)
 
     days = dates.DayLocator()
@@ -75,12 +76,12 @@ def draw_plot(data_frame, debug_mode):
     #fig.autofmt_xdate()
 
     if debug_mode:
-        print("Saving plot to " + plot_path + plot_file_debug)
-        pylab.savefig(plot_path + plot_file_debug, bbox_inches='tight',
+        print("Saving plot to " +  plot_file_debug)
+        pylab.savefig( plot_file_debug, bbox_inches='tight',
                       facecolor=fig.get_facecolor(), transparent=True)
     else:
-        print("Saving plot to " + plot_path + plot_file)
-        pylab.savefig(plot_path + plot_file, bbox_inches='tight', facecolor=fig.get_facecolor(),
+        print("Saving plot to " +  plot_file)
+        pylab.savefig( plot_file, bbox_inches='tight', facecolor=fig.get_facecolor(),
                       transparent=True)
     if debug_mode:
         plt.show()

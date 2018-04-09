@@ -3,12 +3,11 @@ import pandas as pd
 import paths
 
 class DatabaseHandler():
-    def __init__(self, debug_mode):
+    def __init__(self, debug_mode, local_db):
         # Creates or opens the file with a SQLite3 DB
-        dbPath = paths.dropboxPath
-        self.dbName = 'HRC-F17.db'
-        print ("Connecting to database " + dbPath + self.dbName)
-        self.conn = sqlite3.connect(dbPath + self.dbName, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
+        self.dbName = local_db
+        print ("Connecting to database " + self.dbName)
+        self.conn = sqlite3.connect(self.dbName, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
         self.c = self.conn.cursor()
         self.c.execute('create table if not exists Teams (id integer primary key, teamName text, teamIcon text)')
         self.c.execute('create table if not exists Distances (id integer primary key, log_time timestamp, teamId integer, totalMiles integer)')

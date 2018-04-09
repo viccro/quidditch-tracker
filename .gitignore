@@ -5,3 +5,5 @@
 */paths.py
 log/
 webpages/
+env/
+.env
