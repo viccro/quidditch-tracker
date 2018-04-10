@@ -53,9 +53,10 @@ class DatabaseHandler():
         for row in rows:
             print(row)
 
-    def get_distance_over_time_map(self):
+    def get_distance_over_time_map(self, teamsToDraw=[]):
         distances_by_team = dict()
         teams = set()
+
         #Get all team ids
         self.c.execute("SELECT id FROM Teams")
         rows = self.c.fetchall()
@@ -72,8 +73,10 @@ class DatabaseHandler():
                 time = log[0]
                 team = self.get_team_name_from_id(log[1])
                 dist = log[2]
-                team_times.append(time)
-                team_dists.append(dist)
+                if (teamsToDraw==[]) or (team in teamsToDraw):
+                    print("Adding team " + team + " to plot")
+                    team_times.append(time)
+                    team_dists.append(dist)
             # feed into a dict of form {team1: ([time1, time2, ...], [dist1, dist2, ...]),
             #                           team2: ... }
             entry = pd.Series(team_dists, team_times)
