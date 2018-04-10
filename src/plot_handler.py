@@ -12,6 +12,9 @@ mpl.use('TkAgg')
 # Colorblind-friendly colors
 colors = [[0,0,0], [230/255,159/255,0], [86/255,180/255,233/255], [0,158/255,115/255],
           [213/255,94/255,0], [0,114/255,178/255]]
+yellow = [230/255,159/255,0]
+green = [86/255,180/255,233/255]
+black = [0,0,0]
 
 bg_color = "xkcd:bluegrey"
 text_color = "#f0f0f0"
@@ -57,7 +60,6 @@ def draw_plot(data_frame, debug_mode):
     datemin = dt.datetime(2018, 4, 9, 12, 0)
     datenow = dt.datetime.now()
     raceDuration = datenow - datemin
-    print(raceDuration/3)
     datemax = datenow + dt.timedelta(minutes=60)
     ax.set_xlim(datemin, datemax)
 

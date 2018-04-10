@@ -30,23 +30,27 @@ if not debug_mode:
     DH.add_distance(teamList, now)
 
     #Push db to dropbox
-    DB.write(local_db, "/S18/scrape.db")
+    #DB.write(local_db, "/S18/scrape.db")
 
 if debug_mode:
     DH.print_table_contents("Teams")
     DH.print_table_contents("Distances")
 
 #Generate plots
-data_by_team = DH.get_distance_over_time_map()
+
+#print("grab all")
+#data_by_team_all = DH.get_distance_over_time_map()
+#if debug_mode:
+#    print (data_by_team_all)
+
+print("grab relevant plots")
+data_by_team_BmcBA = DH.get_distance_over_time_map(['Badger McBadass','The Dementors','SnekyMcSnekface'])
 DH.close_db()
 
-if debug_mode:
-    print (data_by_team)
-
-ph.plot_distance_over_time(data_by_team, debug_mode)
+ph.plot_distance_over_time(data_by_team_BmcBA, debug_mode)
 
 if not debug_mode:
     #Push plot to dropbox
     DB.write(local_plot, "/S18/plot.png")
 
-#ph.bin_by_hour(data_by_team)
+#ph.bin_by_hour(data_by_team) #TODO

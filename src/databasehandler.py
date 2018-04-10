@@ -65,21 +65,21 @@ class DatabaseHandler():
 
         #for each id, get all distances sorted by datetime
         for teamId in teams:
-            team_times = list()
-            team_dists = list()
-            self.c.execute("SELECT log_time as \'[timestamp]\', teamId, totalMiles FROM Distances WHERE teamId = " + str(teamId) + " ORDER BY log_time")
-            distance_logs = self.c.fetchall()
-            for log in distance_logs:
-                time = log[0]
-                team = self.get_team_name_from_id(log[1])
-                dist = log[2]
-                if (teamsToDraw==[]) or (team in teamsToDraw):
-                    print("Adding team " + team + " to plot")
+            team = self.get_team_name_from_id(teamId)
+            if (teamsToDraw == []) or (team in teamsToDraw):
+                print("Adding team " + team + " to plot")
+                team_times = list()
+                team_dists = list()
+                self.c.execute("SELECT log_time as \'[timestamp]\', teamId, totalMiles FROM Distances WHERE teamId = " + str(teamId) + " ORDER BY log_time")
+                distance_logs = self.c.fetchall()
+                for log in distance_logs:
+                    time = log[0]
+                    dist = log[2]
                     team_times.append(time)
                     team_dists.append(dist)
-            # feed into a dict of form {team1: ([time1, time2, ...], [dist1, dist2, ...]),
-            #                           team2: ... }
-            entry = pd.Series(team_dists, team_times)
-            distances_by_team[team] = entry
+                # feed into a dict of form {team1: ([time1, time2, ...], [dist1, dist2, ...]),
+                #                           team2: ... }
+                entry = pd.Series(team_dists, team_times)
+                distances_by_team[team] = entry
 
         return distances_by_team
