@@ -37,12 +37,12 @@ sheets_api = sheets_service.spreadsheets()
 class SheetsHandler():
     def __init__(self):
         self.points_teams_ordered = get_name_column('Ranking and Points')
-        self.distance_teams_ordered = get_name_column('Teams Daily (Total)')
-        self.distance_racers_ordered = get_name_column('MPP Daily (Total)')
+        self.distance_teams_ordered = get_name_column('Team Miles - 8pm')
+        self.distance_racers_ordered = get_name_column('Racer Miles - 8pm')
 
         self.points_headers_ordered = get_column_headers('Ranking and Points')
-        self.distance_teams_headers_ordered = get_column_headers('Teams Daily (Total)')
-        self.distance_racers_headers_ordered = get_column_headers('MPP Daily (Total)')
+        self.distance_teams_headers_ordered = get_column_headers('Team Miles - 8pm')
+        self.distance_racers_headers_ordered = get_column_headers('Racer Miles - 8pm')
 
     def write_points_to_sheets(self, teamName, pointsStruct, totalPoints):
         points_column_to_value = {
@@ -65,12 +65,49 @@ class SheetsHandler():
                 pass
             column = inc_letter(column)
 
-    # def write_team_distances_to_sheets(self):
-    #     team_distances = get_latest_team_distances()
-    #     team_distances_alpha = sort that stuff
-    #     team_distances_formatted = [[]]
-    #     number_rows = 
-    #     write_cells()
+    def write_team_distances_to_sheets(self, team_distances_dict, hour, day):
+        print("Write team distances to google sheets")
+        sheet_name = "Team Miles - " + hour
+
+        ordered_distances = []
+        for team in self.distance_teams_ordered:
+            try:
+                dist = team_distances_dict[team]
+                ordered_distances.append([dist])
+            except KeyError as e:
+                print(e)
+
+        #Get row numbers
+        max_row = len(ordered_distances) + 1
+        
+        #Get column letter
+        column_num = self.distance_teams_headers_ordered.index("Day " + str(day) + " Total") + 1
+        column_letter = num_to_letter(column_num)
+
+        write_cells(sheet_name + "!" + column_letter + "2:" + column_letter + str(max_row), ordered_distances)
+
+
+    def write_racer_distances_to_sheets(self, racer_distances_dict, hour, day):   
+        print("Write racer distances to google sheets")
+        sheet_name = "Racer Miles - " + hour
+
+        ordered_distances = []
+        for racer in self.distance_racers_ordered:
+            try:
+              dist = racer_distances_dict[racer]
+              ordered_distances.append([dist])
+              print(racer, dist)
+            except KeyError as e:
+                print(e)
+
+        #Get row numbers
+        max_row = len(ordered_distances) + 1
+        
+        #Get column letter
+        column_num = self.distance_racers_headers_ordered.index("Day " + str(day) + " Total") + 1
+        column_letter = num_to_letter(column_num)
+
+        write_cells(sheet_name + "!" + column_letter + "2:" + column_letter + str(max_row), ordered_distances)
 
 
 def get_name_column(sheetName):
@@ -91,10 +128,16 @@ def getRange(sheet, cells):
 
 def write_cells(cells, value):
     time.sleep(.5)
-    body = {'values': [[value]]}
+    if isinstance(value, list):
+        body = {'values': value}
+    else:
+        body = {'values': [[value]]}
     result = sheets_api.values().update(
         spreadsheetId=spreadsheet_id, range=cells, body=body, valueInputOption='RAW').execute()
     print('{0} cells updated.'.format(result.get('updatedCells')))
 
 def inc_letter(letter):
     return chr(ord(letter) + 1)
+
+def num_to_letter(num):
+    return chr(64+num)

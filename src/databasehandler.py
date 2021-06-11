@@ -13,8 +13,8 @@ class DatabaseHandler():
         self.c.execute('create table if not exists Teams (id integer primary key, teamName text, teamIcon text, grudgePoints int, cowsPoints int, proclaimerPoints int, jackBauerPoints int, totalPoints int)')
         self.c.execute('create table if not exists TeamDistances (id integer primary key, log_time timestamp, teamId integer, totalMiles integer)')
 
-        self.c.execute('create table if not exists Racers (id integer primary key, racerName text, racerIcon text, mileGoal float, mileStretchGoal float)')
-        self.c.execute('create table if not exists RacerDistances (id integer primary key, log_time timestamp, racerId integer, totalMiles integer)')
+        #self.c.execute('create table if not exists Racers (id integer primary key, racerName text, racerIcon text, mileGoal float, mileStretchGoal float)')
+        #self.c.execute('create table if not exists RacerDistances (id integer primary key, log_time timestamp, racerId integer, totalMiles integer)')
 
         self.SH = sh.SheetsHandler()
 
@@ -123,7 +123,7 @@ class DatabaseHandler():
                 print("Adding team " + team + " to plot")
                 team_times = list()
                 team_dists = list()
-                self.c.execute("SELECT log_time as \'[timestamp]\', teamId, totalMiles FROM Distances WHERE teamId = " + str(teamId) + " ORDER BY log_time")
+                self.c.execute("SELECT log_time as \'[timestamp]\', teamId, totalMiles FROM teamDistances WHERE teamId = " + str(teamId) + " ORDER BY log_time")
                 distance_logs = self.c.fetchall()
                 for log in distance_logs:
                     time = log[0]
@@ -136,3 +136,46 @@ class DatabaseHandler():
                 distances_by_team[team] = entry
 
         return distances_by_team
+
+    def write_distances_to_sheets(self, hour, day):
+        team_distances = self.get_team_distances()
+        self.SH.write_team_distances_to_sheets(team_distances, hour, day)
+
+        # racer_distances = self.get_racer_distances()
+        # self.SH.write_racer_distances_to_sheets(racer_distances, hour, day)
+
+    def get_team_distances(self):
+        distances_by_team = dict()
+        teams = set()
+
+        #Get all team ids
+        self.c.execute("SELECT id, teamName FROM Teams")
+        rows = self.c.fetchall()
+        for row in rows:
+            teams.add((row[0], row[1]))
+
+        #for each id, get all distances sorted by datetime
+        for teamId, teamName in teams:
+            self.c.execute("SELECT log_time as \'[timestamp]\', totalMiles FROM TeamDistances WHERE teamId = " + str(teamId) + " ORDER BY log_time DESC")
+            distance_log = self.c.fetchone()
+            distances_by_team[teamName] = distance_log[1]
+
+        return distances_by_team
+
+    def get_racer_distances(self):
+        distances_by_racer = dict()
+        racers = set()
+
+        #Get all team ids
+        self.c.execute("SELECT id, racerName FROM Racers")
+        rows = self.c.fetchall()
+        for row in rows:
+            racers.add((row[0], row[1]))
+
+        #for each id, get all distances sorted by datetime
+        for racerId, racerName in racers:
+            self.c.execute("SELECT log_time as \'[timestamp]\', totalMiles FROM RacerDistances WHERE racerId = " + str(racerId) + " ORDER BY log_time DESC")
+            distance_log = self.c.fetchone()
+            distances_by_racer[racerName] = distance_log[1]
+
+        return distances_by_racer
