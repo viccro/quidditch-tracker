@@ -60,7 +60,7 @@ class SheetsHandler():
         for column_header in self.points_headers_ordered:
             try:
                 value_to_write = points_column_to_value[column_header]
-                write_cells(column+str(row_number), value_to_write)
+                write_cells("'Ranking and Points'!"+column+str(row_number), value_to_write)
             except:
                 pass
             column = inc_letter(column)

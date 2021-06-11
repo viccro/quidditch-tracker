@@ -13,3 +13,8 @@ pytz==2018.3
 requests==2.18.4
 six==1.11.0
 urllib3==1.22
+google-api-python-client==1.12.8
+google-auth==1.31.0
+google-auth-oauthlib==0.4.1
+dropbox==11.10.0
+python-dotenv==0.17.1
