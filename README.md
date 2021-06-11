@@ -1,2 +1,2 @@
 # quidditch-tracker
-The arithmancy behind the quidditch event tracker
+The arithmancy behind the racery event tracker

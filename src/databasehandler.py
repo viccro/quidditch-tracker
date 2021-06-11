@@ -1,6 +1,7 @@
 import sqlite3
 import pandas as pd
 import paths
+import sheetsHandler as sh
 
 class DatabaseHandler():
     def __init__(self, debug_mode, local_db):
@@ -9,8 +10,13 @@ class DatabaseHandler():
         print ("Connecting to database " + self.dbName)
         self.conn = sqlite3.connect(self.dbName, detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
         self.c = self.conn.cursor()
-        self.c.execute('create table if not exists Teams (id integer primary key, teamName text, teamIcon text)')
-        self.c.execute('create table if not exists Distances (id integer primary key, log_time timestamp, teamId integer, totalMiles integer)')
+        self.c.execute('create table if not exists Teams (id integer primary key, teamName text, teamIcon text, grudgePoints int, cowsPoints int, proclaimerPoints int, jackBauerPoints int, totalPoints int)')
+        self.c.execute('create table if not exists TeamDistances (id integer primary key, log_time timestamp, teamId integer, totalMiles integer)')
+
+        self.c.execute('create table if not exists Racers (id integer primary key, racerName text, racerIcon text, mileGoal float, mileStretchGoal float)')
+        self.c.execute('create table if not exists RacerDistances (id integer primary key, log_time timestamp, racerId integer, totalMiles integer)')
+
+        self.SH = sh.SheetsHandler()
 
     def populate_team_table(self, teamList):
         print ("Filling Teams Table")
@@ -19,19 +25,56 @@ class DatabaseHandler():
                 team = teamList[teamName]
                 self.c.execute("INSERT INTO Teams (teamName, teamIcon) " +
                     " VALUES (\"" + team.name + "\", \"" + team.image_url + "\")")
+        self.conn.commit()
+
+    def populate_racer_table(self, racerList):
+        print ("Filling Racers Table")
+        for racerName in racerList.keys():
+            if not self.has_value("Racers", "racerName", racerName):
+                racer = racerList[racerName]
+                self.c.execute("INSERT INTO Racers (racerName, racerIcon) " +
+                    " VALUES (\"" + racer.name + "\", \"" + racer.image_url + "\")")
+        self.conn.commit()
 
     def close_db(self):
         print ("Closing database")
         self.conn.commit()
         self.conn.close()
 
-    def add_distance(self, teamList, time):
-        print ("Filling Distance Table")
+    def add_team_distance(self, teamList, time):
+        print ("Filling Team Distance Table")
         for teamName in teamList.keys():
             teamDistance = teamList[teamName].distance
             teamId = self.get_id_from_team_name(teamName)
-            self.c.execute("INSERT INTO Distances (log_time, teamId, totalMiles) " +
+            self.c.execute("INSERT INTO TeamDistances (log_time, teamId, totalMiles) " +
                            " VALUES (?, ?, ?)", (time, teamId, teamDistance))#\"(?)\", \"" + teamId + "\", \"" + teamDistance + "\")")
+        self.conn.commit()
+
+    def add_racer_distance(self, racerList, time):
+        print ("Filling Racer Distance Table")
+        for racerName in racerList.keys():
+            racerDistance = racerList[racerName].distance
+            racerId = self.get_id_from_racer_name(racerName)
+            self.c.execute("INSERT INTO RacerDistances (log_time, racerId, totalMiles) " +
+                           " VALUES (?, ?, ?)", (time, racerId, racerDistance))#\"(?)\", \"" + racerId + "\", \"" + racerDistance + "\")")
+        self.conn.commit()
+
+    def update_team_points(self, teamList):
+        print ("Calculating Points and Updating Table")
+        from calculator import currentPoints
+
+        for teamName in teamList.keys():
+            teamId = self.get_id_from_team_name(teamName)
+            points = currentPoints(self.c, teamName)
+            totalPoints = points.grudge + points.cows + points.proclaimer + points.jackBauer
+            #Write to db
+            self.c.execute("UPDATE Teams SET grudgePoints = '" + str(points.grudge) + "', cowsPoints = '" + str(points.cows) +
+                "', proclaimerPoints = '" +  str(points.proclaimer) + "', jackBauerPoints = '" + str(points.jackBauer) + 
+                "', totalPoints = '" + str(totalPoints) + "' WHERE id = " + str(teamId) + ";")
+            
+            #Write to sheets
+            self.SH.write_points_to_sheets(teamName, points, totalPoints)
+        self.conn.commit()
 
     def has_value(self, table, column, value):
         query = 'SELECT 1 from {} WHERE {} = ? LIMIT 1'.format(table, column)
@@ -42,8 +85,18 @@ class DatabaseHandler():
         rows = self.c.fetchone()
         return rows[0]
 
+    def get_id_from_racer_name(self, name):
+        self.c.execute("SELECT id from Racers where racerName = \"" + name + "\"")
+        rows = self.c.fetchone()
+        return rows[0]
+
     def get_team_name_from_id(self, id):
         self.c.execute("SELECT teamName from Teams where id = " + str(id) + "")
+        rows = self.c.fetchone()
+        return rows[0]
+
+    def get_racer_name_from_id(self, id):
+        self.c.execute("SELECT racerName from Racers where id = " + str(id) + "")
         rows = self.c.fetchone()
         return rows[0]
 
@@ -53,7 +106,7 @@ class DatabaseHandler():
         for row in rows:
             print(row)
 
-    def get_distance_over_time_map(self, teamsToDraw=[]):
+    def get_team_distance_over_time_map(self, teamsToDraw=[]):
         distances_by_team = dict()
         teams = set()
 
