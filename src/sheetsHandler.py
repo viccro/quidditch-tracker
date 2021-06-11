@@ -65,12 +65,12 @@ class SheetsHandler():
                 pass
             column = inc_letter(column)
 
-    def write_team_distances_to_sheets(self):
-        team_distances = get_latest_team_distances()
-        team_distances_alpha = sort that stuff
-        team_distances_formatted = [[]]
-        number_rows = 
-        write_cells()
+    # def write_team_distances_to_sheets(self):
+    #     team_distances = get_latest_team_distances()
+    #     team_distances_alpha = sort that stuff
+    #     team_distances_formatted = [[]]
+    #     number_rows = 
+    #     write_cells()
 
 
 def get_name_column(sheetName):
