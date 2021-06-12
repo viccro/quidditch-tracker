@@ -38,11 +38,11 @@ class SheetsHandler():
     def __init__(self):
         self.points_teams_ordered = get_name_column('Ranking and Points')
         self.distance_teams_ordered = get_name_column('Team Miles - 8pm')
-        self.distance_racers_ordered = get_name_column('Racer Miles - 8pm')
+        #self.distance_racers_ordered = get_name_column('Racer Miles - 8pm')
 
         self.points_headers_ordered = get_column_headers('Ranking and Points')
         self.distance_teams_headers_ordered = get_column_headers('Team Miles - 8pm')
-        self.distance_racers_headers_ordered = get_column_headers('Racer Miles - 8pm')
+        #self.distance_racers_headers_ordered = get_column_headers('Racer Miles - 8pm')
 
     def write_points_to_sheets(self, teamName, pointsStruct, totalPoints):
         points_column_to_value = {
