@@ -87,27 +87,27 @@ class SheetsHandler():
         write_cells(sheet_name + "!" + column_letter + "2:" + column_letter + str(max_row), ordered_distances)
 
 
-    def write_racer_distances_to_sheets(self, racer_distances_dict, hour, day):   
-        print("Write racer distances to google sheets")
-        sheet_name = "Racer Miles - " + hour
+    # def write_racer_distances_to_sheets(self, racer_distances_dict, hour, day):   
+    #     print("Write racer distances to google sheets")
+    #     sheet_name = "Racer Miles - " + hour
 
-        ordered_distances = []
-        for racer in self.distance_racers_ordered:
-            try:
-              dist = racer_distances_dict[racer]
-              ordered_distances.append([dist])
-              print(racer, dist)
-            except KeyError as e:
-                print(e)
+    #     ordered_distances = []
+    #     for racer in self.distance_racers_ordered:
+    #         try:
+    #           dist = racer_distances_dict[racer]
+    #           ordered_distances.append([dist])
+    #           print(racer, dist)
+    #         except KeyError as e:
+    #             print(e)
 
-        #Get row numbers
-        max_row = len(ordered_distances) + 1
+    #     #Get row numbers
+    #     max_row = len(ordered_distances) + 1
         
-        #Get column letter
-        column_num = self.distance_racers_headers_ordered.index("Day " + str(day) + " Total") + 1
-        column_letter = num_to_letter(column_num)
+    #     #Get column letter
+    #     column_num = self.distance_racers_headers_ordered.index("Day " + str(day) + " Total") + 1
+    #     column_letter = num_to_letter(column_num)
 
-        write_cells(sheet_name + "!" + column_letter + "2:" + column_letter + str(max_row), ordered_distances)
+    #     write_cells(sheet_name + "!" + column_letter + "2:" + column_letter + str(max_row), ordered_distances)
 
 
 def get_name_column(sheetName):

@@ -82,13 +82,13 @@ if debug_mode:
 #Generate plots
 
 print("Total mileage plots")
-data_by_team_all = DH.get_distance_over_time_map()
+data_by_team_all = DH.get_team_distance_over_time_map()
 if debug_mode:
    print (data_by_team_all)
 
 
 print("Grudge match plots")
-data_by_team_BmcBA = DH.get_distance_over_time_map(['Badger McBadass','The Dementors','SnekyMcSnekface'])
+data_by_team_BmcBA = DH.get_team_distance_over_time_map(['Electric Mayhem','Moose&Squirrel','One Race More'])
 
 
 ph.plot_distance_over_time(data_by_team_BmcBA, debug_mode)

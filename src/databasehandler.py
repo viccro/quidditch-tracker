@@ -144,6 +144,7 @@ class DatabaseHandler():
         # racer_distances = self.get_racer_distances()
         # self.SH.write_racer_distances_to_sheets(racer_distances, hour, day)
 
+    # Get most up to date total distances from teams
     def get_team_distances(self):
         distances_by_team = dict()
         teams = set()

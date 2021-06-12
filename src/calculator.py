@@ -71,7 +71,7 @@ def cowsPoints(cursor, teamName):
     #Get total miles from latest datetime for ALL teams
     teamDistances = []
     for name, id in teams:
-        cursor.execute("SELECT log_time as \'[timestamp]\', id, totalMiles FROM teamDistances WHERE id = " + str(id) + " ORDER BY log_time")
+        cursor.execute("SELECT log_time as \'[timestamp]\', teamId, totalMiles FROM teamDistances WHERE teamId = " + str(id) + " ORDER BY log_time DESC")
         distance_log = cursor.fetchone()
         total_dist = distance_log[2]
         teamDistances.append((name, total_dist))
@@ -105,7 +105,8 @@ def get_distance_by_team_name(cursor, teamName):
     id, = cursor.fetchone()
     
     #Get total miles from latest datetime
-    cursor.execute("SELECT log_time as \'[timestamp]\', id, totalMiles FROM teamDistances WHERE id = " + str(id) + " ORDER BY log_time")
+    cursor.execute("SELECT log_time as \'[timestamp]\', teamId, totalMiles FROM teamDistances WHERE teamId = " + str(id) + " ORDER BY log_time DESC")
     distance_log = cursor.fetchone()
+    print(teamName, distance_log)
     totalDist = distance_log[2]
     return totalDist

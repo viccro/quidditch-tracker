@@ -64,6 +64,7 @@ def draw_plot(data_frame, debug_mode):
     ax.set_xlim(datemin, datemax)
 
     days = dates.DayLocator()
+    days.MAXTICKS = 2000
     ax.xaxis.set_major_locator(days)
     majorFormatter = dates.DateFormatter("%m/%d")
     ax.xaxis.set_major_formatter(majorFormatter)
@@ -71,6 +72,7 @@ def draw_plot(data_frame, debug_mode):
     minorFormatter = dates.DateFormatter("%I%p")
     ax.xaxis.set_minor_formatter(minorFormatter)
     hours = dates.HourLocator(arange(2, 25, 2))
+    hours.MAXTICKS = 2000
     ax.xaxis.set_minor_locator(hours)
 
     plt.setp(ax.xaxis.get_majorticklabels(), rotation='vertical', fontsize=12, ha='center')
