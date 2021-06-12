@@ -19,9 +19,8 @@ black = [0,0,0]
 bg_color = "xkcd:bluegrey"
 text_color = "#f0f0f0"
 
-plot_path = paths.local_directory
 plot_file_debug = paths.local_directory + "plot-debug.png"
-plot_file = paths.local_directory + "local.png"
+plot_file = paths.local_directory + "local_total_miles.png"
 
 
 def plot_distance_over_time(data_by_team, debug_mode):
@@ -57,14 +56,14 @@ def draw_plot(data_frame, debug_mode):
 
     # Date formatting
     graph.tick_params(axis='both', which='major', labelsize=10)
-    datemin = dt.datetime(2018, 4, 9, 12, 0)
+    datemin = dt.datetime(2021, 6, 11, 12, 0)
     datenow = dt.datetime.now()
     raceDuration = datenow - datemin
     datemax = datenow + dt.timedelta(minutes=60)
     ax.set_xlim(datemin, datemax)
 
     days = dates.DayLocator()
-    days.MAXTICKS = 2000
+    days.MAXTICKS = 5000
     ax.xaxis.set_major_locator(days)
     majorFormatter = dates.DateFormatter("%m/%d")
     ax.xaxis.set_major_formatter(majorFormatter)
@@ -72,7 +71,7 @@ def draw_plot(data_frame, debug_mode):
     minorFormatter = dates.DateFormatter("%I%p")
     ax.xaxis.set_minor_formatter(minorFormatter)
     hours = dates.HourLocator(arange(2, 25, 2))
-    hours.MAXTICKS = 2000
+    hours.MAXTICKS = 5000
     ax.xaxis.set_minor_locator(hours)
 
     plt.setp(ax.xaxis.get_majorticklabels(), rotation='vertical', fontsize=12, ha='center')

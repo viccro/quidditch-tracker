@@ -97,6 +97,6 @@ DH.close_db()
 
 if not debug_mode:
     #Push plot to dropbox
-    DB.write(local_plot, paths.dropbox_directory + "plot.png")
+    DB.write(local_plot_total_miles, paths.dropbox_directory + "plot.png")
 
 #ph.bin_by_hour(data_by_team) #TODO
