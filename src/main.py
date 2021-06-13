@@ -83,20 +83,23 @@ if debug_mode:
 
 print("Total mileage plots")
 data_by_team_all = DH.get_team_distance_over_time_map()
-if debug_mode:
-   print (data_by_team_all)
+ph.plot_distance_over_time(data_by_team_all, debug_mode, local_plot_total_miles)
+
+# if debug_mode:
+#    print (data_by_team_all)
 
 
 print("Grudge match plots")
-data_by_team_BmcBA = DH.get_team_distance_over_time_map(['Electric Mayhem','Moose&Squirrel','One Race More'])
+data_by_team_grudge = DH.get_team_distance_over_time_map(['Electric Mayhem','Moose&Squirrel','One Race More'])
 
 
-ph.plot_distance_over_time(data_by_team_BmcBA, debug_mode)
+ph.plot_distance_over_time(data_by_team_grudge, debug_mode, local_plot_full_grudge)
 
 DH.close_db()
 
 if not debug_mode:
     #Push plot to dropbox
-    DB.write(local_plot_total_miles, paths.dropbox_directory + "plot.png")
+    DB.write(local_plot_total_miles, paths.dropbox_directory + "total_miles.png")
+    DB.write(local_plot_full_grudge, paths.dropbox_directory + "grudge_miles.png")
 
 #ph.bin_by_hour(data_by_team) #TODO
