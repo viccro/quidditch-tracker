@@ -4,14 +4,15 @@ import scraper
 import json
 import databasehandler as dh
 import plot_handler as ph
-import datetime
+import datetime as dt
 import dropboxHandler as DB
 import paths
 from dotenv import load_dotenv
+import pandas as pd
 
 load_dotenv() # get environment variables from .env
 debug_mode = False
-now = datetime.datetime.now()
+now = dt.datetime.now()
 print ("====================")
 print (now.strftime("%b %d, %I:%M %p"))
 
@@ -83,17 +84,25 @@ if debug_mode:
 
 print("Total mileage plots")
 data_by_team_all = DH.get_team_distance_over_time_map()
-ph.plot_distance_over_time(data_by_team_all, debug_mode, local_plot_total_miles)
+ph.plot_distance_over_time(data_by_team_all, now.replace(day=(now.day - 2)), debug_mode, "Total Mileage Over Time", local_plot_total_miles)
 
 # if debug_mode:
 #    print (data_by_team_all)
 
 
 print("Grudge match plots")
-data_by_team_grudge = DH.get_team_distance_over_time_map(['Electric Mayhem','Moose&Squirrel','One Race More'])
+data_by_team_grudge_subset = DH.get_team_distance_over_time_map(['Electric Mayhem','Moose&Squirrel','One Race More'])
 
+for team in data_by_team_grudge_subset:
+    team_dists_capped = []
+    team_times = []
+    for team_time, team_dist in data_by_team_grudge_subset[team].items():
+        team_dists_capped.append(1600 if team_dist >= 1600 else team_dist)
+        team_times.append(team_time)
+    entry = pd.Series(team_dists_capped, team_times)
+    data_by_team_grudge_subset[team] = entry
 
-ph.plot_distance_over_time(data_by_team_grudge, debug_mode, local_plot_full_grudge)
+ph.plot_distance_over_time(data_by_team_grudge_subset, now.replace(day=(now.day - 2)), debug_mode, "Grudge Match", local_plot_full_grudge)
 
 DH.close_db()
 

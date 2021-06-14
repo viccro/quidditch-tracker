@@ -38,6 +38,7 @@ def currentPoints(cursor, teamName):
 
 
 def grudgePoints(cursor, teamName):
+    print("Calculating Grudge")
     match_name = grudgeMatches[teamName]
     teams_in_match = matchTeams[match_name]
 
@@ -46,21 +47,23 @@ def grudgePoints(cursor, teamName):
     for team in teams_in_match:
         distance = get_distance_by_team_name(cursor, team)
         teamDistances.append((team, distance))
+        time_crossing_finish = get_earliest_crossing(cursor, teamName, 1600)
 
     #figure out cap of 1600 timing
 
     teams_sorted_by_distance = tuple_sort(teamDistances)
     points = 1
     for name, distance in teams_sorted_by_distance:
-        if name is teamName:
+        if name == teamName:
             return points
         else:
             points += 1
 
-    return 0
+    return points
 
 
 def cowsPoints(cursor, teamName):
+    print("Calculating Cows")
     #Get team list
     teams = []
     cursor.execute("SELECT teamName, id FROM Teams")
@@ -79,21 +82,22 @@ def cowsPoints(cursor, teamName):
     teams_sorted_by_distance = tuple_sort(teamDistances)
     points = 1
     for name, distance in teams_sorted_by_distance:
-        if name is teamName:
+        if name == teamName:
             return points
         else:
             points += 1
-
     return 0
 
 
 def proclaimerPoints(cursor, teamName):
+    print("Calculating Proclaimer")
     totalDist = get_distance_by_team_name(cursor, teamName)
     points = math.floor(totalDist / 1000)
     return points
 
 
 def jackBauerPoints(cursor, teamName):
+    print("Calculating Jack")
     return 0
 
 def tuple_sort(list_of_tuples):
@@ -107,6 +111,15 @@ def get_distance_by_team_name(cursor, teamName):
     #Get total miles from latest datetime
     cursor.execute("SELECT log_time as \'[timestamp]\', teamId, totalMiles FROM teamDistances WHERE teamId = " + str(id) + " ORDER BY log_time DESC")
     distance_log = cursor.fetchone()
-    print(teamName, distance_log)
     totalDist = distance_log[2]
     return totalDist
+
+def get_earliest_crossing(cursor, teamName, mile):
+    #Get teamId
+    cursor.execute("SELECT id FROM Teams WHERE teamName = \"" + teamName + "\"")
+    id, = cursor.fetchone()
+
+    cursor.execute("SELECT log_time as \'[timestamp]\', teamId, totalMiles FROM teamDistances WHERE teamId = " + str(id) + " AND totalMiles > " + str(mile) + " ORDER BY log_time LIMIT 1")
+    distance_log = cursor.fetchone()
+    time_of_crossing = distance_log[0] if distance_log else None
+    return time_of_crossing

@@ -22,10 +22,10 @@ text_color = "#f0f0f0"
 
 plot_file_debug = paths.local_directory + "plot-debug.png"
 
-def plot_distance_over_time(data_by_team, debug_mode, file_path):
+def plot_distance_over_time(data_by_team, start_time, debug_mode, graph_name, file_path):
     print("Plotting distances over time")
     data_frame = pd.DataFrame(data = data_by_team)
-    draw_plot(data_frame, debug_mode, file_path)
+    draw_plot(data_frame, start_time, debug_mode, graph_name, file_path)
 
 def bin_by_hour(data_by_team):
     print("Plotting miles binned by hour")
@@ -36,11 +36,11 @@ def dist_between_teams(data_by_team):
     print("Plotting diffs over time")
     pass
 
-def draw_plot(data_frame, debug_mode, file_path):
+def draw_plot(data_frame, start_time, debug_mode, graph_name, file_path):
     style.use('fivethirtyeight')
     fig, ax = plt.subplots(facecolor=bg_color)
     graph = data_frame.plot(figsize=(6, 4), color=colors, ax=ax, linewidth=3, marker="o", markersize=0)
-    ax.set_title("Total Mileage Over Time", color=text_color)
+    ax.set_title(graph_name, color=text_color)
     ax.set_facecolor(bg_color)
     ax.set_clip_on(False)
     ax.set_ylim(ymin=-0.1)
@@ -55,7 +55,7 @@ def draw_plot(data_frame, debug_mode, file_path):
 
     # Date formatting
     graph.tick_params(axis='both', which='major', labelsize=10)
-    datemin = dt.datetime(2021, 6, 11, 12, 0)
+    datemin = start_time
     datenow = dt.datetime.now()
     datemax = datenow + dt.timedelta(minutes=60)
     ax.set_xlim(datemin, datemax)
