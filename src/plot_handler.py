@@ -11,11 +11,11 @@ from numpy import arange
 import paths
 
 # Colorblind-friendly colors
-colors = [[0,0,0], [230/255,159/255,0], [86/255,180/255,233/255], [0,158/255,115/255],
-          [213/255,94/255,0], [0,114/255,178/255]]
-yellow = [230/255,159/255,0]
-green = [86/255,180/255,233/255]
-black = [0,0,0]
+colors = ['#000000', '#E69F00', '#56B4E9', '#009E73',
+          '#D55E00', '#0072B2']
+yellow = '#E69F00'
+green = '#56B4E9'
+black = '#000000'
 
 bg_color = "xkcd:bluegrey"
 text_color = "#f0f0f0"
@@ -61,7 +61,6 @@ def draw_plot(data_frame, debug_mode, file_path):
     ax.set_xlim(datemin, datemax)
 
     days = dates.DayLocator()
-    days.MAXTICKS = 5000
     ax.xaxis.set_major_locator(days)
     majorFormatter = dates.DateFormatter("%m/%d")
     ax.xaxis.set_major_formatter(majorFormatter)
@@ -69,7 +68,6 @@ def draw_plot(data_frame, debug_mode, file_path):
     minorFormatter = dates.DateFormatter("%I%p")
     ax.xaxis.set_minor_formatter(minorFormatter)
     hours = dates.HourLocator(arange(2, 25, 2))
-    hours.MAXTICKS = 5000
     ax.xaxis.set_minor_locator(hours)
 
     plt.setp(ax.xaxis.get_majorticklabels(), rotation='vertical', fontsize=12, ha='center')
