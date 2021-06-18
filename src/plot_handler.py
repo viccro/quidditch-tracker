@@ -12,7 +12,8 @@ import paths
 
 # Colorblind-friendly colors
 colors = ['#000000', '#E69F00', '#56B4E9', '#009E73',
-          '#D55E00', '#0072B2']
+          '#D55E00', '#0072B2', '#ff0000', '#ffa500', 
+          '#ffff00', '#008000', '#0000ff', '#ee82ee']
 yellow = '#E69F00'
 green = '#56B4E9'
 black = '#000000'
@@ -22,21 +23,13 @@ text_color = "#f0f0f0"
 
 plot_file_debug = paths.local_directory + "plot-debug.png"
 
-def plot_distance_over_time(data_by_team, start_time, debug_mode, graph_name, file_path):
+def plot_distance_over_time(data_by_team, start_time, debug_mode, graph_name, file_path, end_time=None):
     print("Plotting distances over time")
     data_frame = pd.DataFrame(data = data_by_team)
-    draw_plot(data_frame, start_time, debug_mode, graph_name, file_path)
+    draw_plot(data_frame, start_time, debug_mode, graph_name, file_path, end_time)
 
-def bin_by_hour(data_by_team):
-    print("Plotting miles binned by hour")
 
-    pass
-
-def dist_between_teams(data_by_team):
-    print("Plotting diffs over time")
-    pass
-
-def draw_plot(data_frame, start_time, debug_mode, graph_name, file_path):
+def draw_plot(data_frame, start_time, debug_mode, graph_name, file_path, end_time):
     style.use('fivethirtyeight')
     fig, ax = plt.subplots(facecolor=bg_color)
     graph = data_frame.plot(figsize=(6, 4), color=colors, ax=ax, linewidth=3, marker="o", markersize=0)
@@ -55,10 +48,10 @@ def draw_plot(data_frame, start_time, debug_mode, graph_name, file_path):
 
     # Date formatting
     graph.tick_params(axis='both', which='major', labelsize=10)
-    datemin = start_time
-    datenow = dt.datetime.now()
-    datemax = datenow + dt.timedelta(minutes=60)
-    ax.set_xlim(datemin, datemax)
+    
+    if not end_time:
+        end_time = dt.datetime.now() + dt.timedelta(minutes=60)
+    ax.set_xlim(start_time, end_time)
 
     days = dates.DayLocator()
     ax.xaxis.set_major_locator(days)

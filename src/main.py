@@ -104,11 +104,16 @@ for team in data_by_team_grudge_subset:
 
 ph.plot_distance_over_time(data_by_team_grudge_subset, now.replace(day=(now.day - 2)), debug_mode, "Grudge Match", local_plot_full_grudge)
 
+print("Jack Bower match plots")
+data_by_team_jack_bauer = DH.get_team_distance_over_time_map()
+ph.plot_distance_over_time(data_by_team_jack_bauer, dt.datetime(year=2021,month=6,day=18,hour=12), debug_mode, "Jack Bauer Challenge", local_plot_jack_bauer, dt.datetime(year=2021,month=6,day=19,hour=12))
+
 DH.close_db()
 
 if not debug_mode:
     #Push plot to dropbox
     DB.write(local_plot_total_miles, paths.dropbox_directory + "total_miles.png")
     DB.write(local_plot_full_grudge, paths.dropbox_directory + "grudge_miles.png")
+    DB.write(local_plot_jack_bauer, paths.dropbox_directory + "jack_bauer.png")
 
 #ph.bin_by_hour(data_by_team) #TODO
