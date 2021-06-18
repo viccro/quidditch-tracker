@@ -15,7 +15,7 @@ debug_mode = False
 now = dt.datetime.now()
 print ("====================")
 print (now.strftime("%b %d, %I:%M %p"))
-hours_offset = dt.timedelta(hours=-4)
+hours_offset = dt.timedelta(hours=4)
 
 local_db = paths.local_directory + "local.db"
 
