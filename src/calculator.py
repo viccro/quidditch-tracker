@@ -1,6 +1,7 @@
 import sqlite3
 import structs
 import math
+import datetime as dt
 
 # Austen City Limits: Stride & Prejudice vs. Here Comes the Run vs. Mouse Rat
 # The French Connection: Electric Mayhem vs. One Race More vs. Moose & Squirrel
@@ -28,6 +29,9 @@ matchTeams = {
     'The French Connection': ['Electric Mayhem', 'One Race More', 'Moose&Squirrel'],
     'Austen City Limits': ['Stride&Prjudice', 'HereComesTheRun', 'Mouse Rat']
 }
+
+jack_start_time = dt.datetime(2021, 6, 18, 12)
+jack_end_time = dt.datetime(2021, 6, 19, 12)
 
 def currentPoints(cursor, teamName):
     grudge = grudgePoints(cursor, teamName)
@@ -79,6 +83,7 @@ def cowsPoints(cursor, teamName):
         total_dist = distance_log[2]
         teamDistances.append((name, total_dist))
 
+    #Sort teams and assign points
     teams_sorted_by_distance = tuple_sort(teamDistances)
     points = 1
     for name, distance in teams_sorted_by_distance:
@@ -98,7 +103,46 @@ def proclaimerPoints(cursor, teamName):
 
 def jackBauerPoints(cursor, teamName):
     print("Calculating Jack")
+    #Get team list
+    teams = []
+    cursor.execute("SELECT teamName, id FROM Teams")
+    rows = cursor.fetchall()
+    for row in rows:
+        teams.append((row[0],row[1]))
+
+
+    teamDistances = []
+    for name, id in teams:
+        #Get points at jack start time
+        start_miles = get_miles_at_time_by_teamId(cursor, id, jack_start_time)
+
+        #If now is in the Jack Window:
+        if dt.datetime.now() < jack_end_time and dt.datetime.now() > jack_start_time:
+        #Get miles now
+            cursor.execute("SELECT log_time as \'[timestamp]\', teamId, totalMiles FROM teamDistances WHERE teamId = " + str(id) + " ORDER BY log_time DESC")
+            distance_log = cursor.fetchone()
+            total_dist = distance_log[2] - start_miles
+            teamDistances.append((name, total_dist))
+    #Else get miles at jack end time
+
+    #Sort teams and assign points
+    teams_sorted_by_distance = tuple_sort(teamDistances)
+    ranking = 12
+    for name, distance in teams_sorted_by_distance:
+        if name == teamName:
+            if ranking < 7:
+                return 1
+        else:
+            ranking -= 1
     return 0
+
+def get_miles_at_time_by_teamId(cursor, teamId, time):
+    time_query_string = str(time.year) + "-" + str(time.month) + "-" + str(time.day) + " " + \
+        str(time.hour) + ":" + str(time.minute) + ":" + str(time.second)
+    cursor.execute("SELECT log_time as \'[timestamp]\', totalMiles FROM teamDistances WHERE teamId = " + str(teamId) + " and log_time < '" + str(time_query_string) + "' ORDER BY log_time DESC")
+    distance_log = cursor.fetchone()
+    return distance_log[1]
+
 
 def tuple_sort(list_of_tuples):
    return(sorted(list_of_tuples, key = lambda x: x[1]))

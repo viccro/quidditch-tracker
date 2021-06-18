@@ -3,6 +3,8 @@ import pandas as pd
 import paths
 import sheetsHandler as sh
 import datetime as dt
+import calculator as Calc
+
 
 class DatabaseHandler():
     def __init__(self, debug_mode, local_db):
@@ -107,7 +109,7 @@ class DatabaseHandler():
         for row in rows:
             print(row)
 
-    def get_team_distance_over_time_map(self, teamsToDraw=[], offset=0):
+    def get_team_distance_over_time_map(self, teamsToDraw=[], hours_offset=0, time_of_offset=None):
         distances_by_team = dict()
         teams = set()
 
@@ -126,11 +128,15 @@ class DatabaseHandler():
                 team_dists = list()
                 self.c.execute("SELECT log_time as \'[timestamp]\', teamId, totalMiles FROM teamDistances WHERE teamId = " + str(teamId) + " ORDER BY log_time")
                 distance_logs = self.c.fetchall()
+                if time_of_offset:
+                    dist_at_offset = Calc.get_miles_at_time_by_teamId(self.c, teamId, time_of_offset)
+                else:
+                    dist_at_offset = 0
                 for log in distance_logs:
-                    time = log[0]
-                    offset_time = time - dt.timedelta(hours=4)
-                    dist = log[2]
-                    team_times.append(offset_time)
+                    time = log[0] - dt.timedelta(hours=4)
+                    dist = log[2] - dist_at_offset
+                    print("offset_dist " + str(dist_at_offset) + ", " + str(log[2]) + " " + str(dist))
+                    team_times.append(time)
                     team_dists.append(dist)
                 # feed into a dict of form {team1: ([time1, time2, ...], [dist1, dist2, ...]),
                 #                           team2: ... }
@@ -138,7 +144,6 @@ class DatabaseHandler():
                 distances_by_team[team] = entry
 
         return distances_by_team
-
 
     def write_distances_to_sheets(self, hour, day):
         team_distances = self.get_team_distances()
