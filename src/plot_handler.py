@@ -49,7 +49,7 @@ def draw_plot(data_frame, start_time, debug_mode, graph_name, file_path, end_tim
     # Date formatting
     graph.tick_params(axis='both', which='major', labelsize=10)
     
-    if not end_time:
+    if not end_time or end_time > dt.datetime.now():
         end_time = dt.datetime.now() + dt.timedelta(minutes=60)
     ax.set_xlim(start_time, end_time)
 

@@ -139,7 +139,6 @@ def jackBauerPoints(cursor, teamName):
 def get_miles_at_time_by_teamId(cursor, teamId, time):
     time_query_string = str(time.year).zfill(4) + "-" + str(time.month).zfill(2) + "-" + str(time.day).zfill(2) + " " + \
         str(time.hour).zfill(2) + ":" + str(time.minute).zfill(2) + ":" + str(time.second).zfill(2)
-    print(time_query_string)
     cursor.execute("SELECT log_time as \'[timestamp]\', totalMiles FROM teamDistances WHERE teamId = " + str(teamId) + " and log_time < '" + str(time_query_string) + "' ORDER BY log_time DESC")
     distance_log = cursor.fetchone()
     return distance_log[1]

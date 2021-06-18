@@ -128,10 +128,8 @@ class DatabaseHandler():
                 team_dists = list()
                 self.c.execute("SELECT log_time as \'[timestamp]\', teamId, totalMiles FROM teamDistances WHERE teamId = " + str(teamId) + " ORDER BY log_time")
                 distance_logs = self.c.fetchall()
-                print("distance_logs: ", distance_logs)
                 if time_of_offset:
                     dist_at_offset = Calc.get_miles_at_time_by_teamId(self.c, teamId, time_of_offset + time_offset)
-                    print("offsets", time_of_offset + time_offset, dist_at_offset)
                 else:
                     dist_at_offset = 0
                 for log in distance_logs:
@@ -140,8 +138,6 @@ class DatabaseHandler():
                     if dist >= 0:
                         team_times.append(time)
                         team_dists.append(dist)
-                # feed into a dict of form {team1: ([time1, time2, ...], [dist1, dist2, ...]),
-                #                           team2: ... }
                 entry = pd.Series(team_dists, team_times)
                 distances_by_team[team] = entry
 
