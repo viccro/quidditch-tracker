@@ -128,9 +128,10 @@ class DatabaseHandler():
                 team_dists = list()
                 self.c.execute("SELECT log_time as \'[timestamp]\', teamId, totalMiles FROM teamDistances WHERE teamId = " + str(teamId) + " ORDER BY log_time")
                 distance_logs = self.c.fetchall()
+                print("distance_logs: ", distance_logs)
                 if time_of_offset:
                     dist_at_offset = Calc.get_miles_at_time_by_teamId(self.c, teamId, time_of_offset + time_offset)
-                    print(time_of_offset + time_offset, dist_at_offset)
+                    print("offsets", time_of_offset + time_offset, dist_at_offset)
                 else:
                     dist_at_offset = 0
                 for log in distance_logs:
