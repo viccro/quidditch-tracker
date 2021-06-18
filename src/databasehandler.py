@@ -135,8 +135,9 @@ class DatabaseHandler():
                 for log in distance_logs:
                     time = log[0] - dt.timedelta(hours=4)
                     dist = log[2] - dist_at_offset
-                    team_times.append(time)
-                    team_dists.append(dist)
+                    if dist >= 0:
+                        team_times.append(time)
+                        team_dists.append(dist)
                 # feed into a dict of form {team1: ([time1, time2, ...], [dist1, dist2, ...]),
                 #                           team2: ... }
                 entry = pd.Series(team_dists, team_times)
