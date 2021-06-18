@@ -2,6 +2,7 @@ import sqlite3
 import pandas as pd
 import paths
 import sheetsHandler as sh
+import datetime as dt
 
 class DatabaseHandler():
     def __init__(self, debug_mode, local_db):
@@ -106,7 +107,7 @@ class DatabaseHandler():
         for row in rows:
             print(row)
 
-    def get_team_distance_over_time_map(self, teamsToDraw=[]):
+    def get_team_distance_over_time_map(self, teamsToDraw=[], offset=0):
         distances_by_team = dict()
         teams = set()
 
@@ -127,8 +128,9 @@ class DatabaseHandler():
                 distance_logs = self.c.fetchall()
                 for log in distance_logs:
                     time = log[0]
+                    offset_time = time - dt.timedelta(hours=4)
                     dist = log[2]
-                    team_times.append(time)
+                    team_times.append(offset_time)
                     team_dists.append(dist)
                 # feed into a dict of form {team1: ([time1, time2, ...], [dist1, dist2, ...]),
                 #                           team2: ... }
@@ -136,6 +138,7 @@ class DatabaseHandler():
                 distances_by_team[team] = entry
 
         return distances_by_team
+
 
     def write_distances_to_sheets(self, hour, day):
         team_distances = self.get_team_distances()
