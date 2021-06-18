@@ -15,7 +15,7 @@ debug_mode = False
 now = dt.datetime.now()
 print ("====================")
 print (now.strftime("%b %d, %I:%M %p"))
-hours_offset = 4
+hours_offset = dt.timedelta(hours=4)
 
 local_db = paths.local_directory + "local.db"
 
@@ -84,7 +84,7 @@ if debug_mode:
 #Generate plots
 
 print("Total mileage plots")
-data_by_team_all = DH.get_team_distance_over_time_map(hours_offset=hours_offset)
+data_by_team_all = DH.get_team_distance_over_time_map(time_offset=hours_offset)
 ph.plot_distance_over_time(data_by_team_all, now.replace(day=(now.day - 2)), debug_mode, "Total Mileage Over Time", local_plot_total_miles)
 
 # if debug_mode:
@@ -92,7 +92,7 @@ ph.plot_distance_over_time(data_by_team_all, now.replace(day=(now.day - 2)), deb
 
 
 print("Grudge match plots")
-data_by_team_grudge_subset = DH.get_team_distance_over_time_map(['Electric Mayhem','Moose&Squirrel','One Race More'],hours_offset=hours_offset)
+data_by_team_grudge_subset = DH.get_team_distance_over_time_map(['Electric Mayhem','Moose&Squirrel','One Race More'],time_offset=hours_offset)
 
 for team in data_by_team_grudge_subset:
     team_dists_capped = []
@@ -106,7 +106,7 @@ for team in data_by_team_grudge_subset:
 ph.plot_distance_over_time(data_by_team_grudge_subset, now.replace(day=(now.day - 2)), debug_mode, "Grudge Match", local_plot_full_grudge)
 
 print("Jack Bower match plots")
-data_by_team_jack_bauer = DH.get_team_distance_over_time_map(hours_offset=hours_offset,time_of_offset=dt.datetime(year=2021,month=6,day=18,hour=12, minute=0, second=0))
+data_by_team_jack_bauer = DH.get_team_distance_over_time_map(time_offset=hours_offset,time_of_offset=dt.datetime(year=2021,month=6,day=18,hour=12, minute=0, second=0))
 print(data_by_team_jack_bauer)
 ph.plot_distance_over_time(data_by_team_jack_bauer, dt.datetime(year=2021,month=6,day=18,hour=12), debug_mode, "Jack Bauer Challenge", local_plot_jack_bauer, dt.datetime(year=2021,month=6,day=19,hour=12, minute=0, second=0))
 

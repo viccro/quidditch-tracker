@@ -109,7 +109,7 @@ class DatabaseHandler():
         for row in rows:
             print(row)
 
-    def get_team_distance_over_time_map(self, teamsToDraw=[], hours_offset=0, time_of_offset=None):
+    def get_team_distance_over_time_map(self, teamsToDraw=[], time_offset=dt.timedelta(hours=0), time_of_offset=None):
         distances_by_team = dict()
         teams = set()
 
@@ -129,11 +129,11 @@ class DatabaseHandler():
                 self.c.execute("SELECT log_time as \'[timestamp]\', teamId, totalMiles FROM teamDistances WHERE teamId = " + str(teamId) + " ORDER BY log_time")
                 distance_logs = self.c.fetchall()
                 if time_of_offset:
-                    dist_at_offset = Calc.get_miles_at_time_by_teamId(self.c, teamId, time_of_offset)
+                    dist_at_offset = Calc.get_miles_at_time_by_teamId(self.c, teamId, time_of_offset + time_offset)
                 else:
                     dist_at_offset = 0
                 for log in distance_logs:
-                    time = log[0] - dt.timedelta(hours=4)
+                    time = log[0] + time_offset
                     dist = log[2] - dist_at_offset
                     if dist >= 0:
                         team_times.append(time)
