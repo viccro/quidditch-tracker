@@ -107,7 +107,7 @@ ph.plot_distance_over_time(data_by_team_grudge_subset, now.replace(day=(now.day 
 
 print("Jack Bower match plots")
 data_by_team_jack_bauer = DH.get_team_distance_over_time_map(hours_offset=hours_offset,time_of_offset=dt.datetime(year=2021,month=6,day=18,hour=12))
-ph.plot_distance_over_time(data_by_team_jack_bauer, dt.datetime(year=2021,month=6,day=18,hour=12), debug_mode, "Jack Bauer Challenge", local_plot_jack_bauer, dt.datetime(year=2021,month=6,day=19,hour=12))
+ph.plot_distance_over_time(data_by_team_jack_bauer, dt.datetime(year=2021,month=6,day=18,hour=12), debug_mode, "Jack Bauer Challenge", local_plot_jack_bauer, dt.datetime(year=2021,month=6,day=19,hour=12, minute=0, second=0))
 
 DH.close_db()
 

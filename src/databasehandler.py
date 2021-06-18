@@ -135,7 +135,6 @@ class DatabaseHandler():
                 for log in distance_logs:
                     time = log[0] - dt.timedelta(hours=4)
                     dist = log[2] - dist_at_offset
-                    print("offset_dist " + str(dist_at_offset) + ", " + str(log[2]) + " " + str(dist))
                     team_times.append(time)
                     team_dists.append(dist)
                 # feed into a dict of form {team1: ([time1, time2, ...], [dist1, dist2, ...]),
